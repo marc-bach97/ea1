@@ -135,7 +135,7 @@ function moveLeft(){
     birdEle.style.transform="scaleX(-1)"; // Dies dreht das Bild horizontal
 }
 
-// Drehe die Scheibe um 15 Grad nach rechts und bewege den Vogel alle 100 Millisekunden einen Schritt vorwärts
+// Drehe die Scheibe um 15 Grad nach rechts und bewege den Vogel alle 150 Millisekunden einen Schritt vorwärts
 function moveAuto(){
     if(automatic_movement){
         return;
@@ -143,7 +143,7 @@ function moveAuto(){
     automatic_movement=true;
     automation_interval = window.setInterval(function(){
      moveRight();
-    }, 100);
+    }, 150);
 }
 
 </script>
