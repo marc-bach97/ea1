@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotierende 2D-Scheibe</title>
+    <style>
+        #bird_image,#disk_image{
+            width: 250px;
+            height: 250px;
+            object-fit: contain;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #rotation_degree{
+            width: 30px;
+            display: inline-block;
+            text-align: right;
+        }
+
+        .bird_left {
+        -webkit-transform: scaleX(-1);
+        transform: scaleX(-1);
+        }
+    </style>
+</head>
+
+<body onload="initImages()">
+    <h1 style="text-align: center;">Rotierende Scheibe</h1>
+    <p style="text-align: center;">Drücken Sie die 'a'-Taste, um automatisch zu rotieren, die 'l'-Taste, um nach links zu rotieren, die 'r'-Taste, um nach rechts zu rotieren</p>
+    <h5 style="text-align: center;">Rotationsgrad <span id="rotation_degree"></span><sup>o</sup></h5>
+    <img src="" alt="Disk image" id="disk_image">
+    <img src="" alt="Bird image" id="bird_image">
+</body>
+
+<script>
+// verwendetes Disc-Image von diesem Link  https://www.pngwing.com/en/free-png-zcpoj
+// Das verwendete Vogelbild wurde aus einem GIF-Bild entnommen und dann in mehrere JPG-Frames konvertiert https://gifer.com/en/tHi 
+
+// Array verfügbarer Disc-Images
+var rotations_array_disk=[0,15,30,45,60,75,90,105,120,135,150,165,180,195,210,225,240,255,270,285,300,315,330,345];
+// der Index des aktiven Images der Disc
+var rotation_position_disk=0;
+// Array verfügbarer Vogelbilder
+var movement_array_bird=[1,2,3,4,5,6,7,8,9,10,11,12,13];
+// Index des aktiven Vogelbildes 
+var movement_position_bird=0; 
+// wird verwendet, um anzuzeigen, ob die Drehung automatisch erfolgt
+var automatic_movement=false;  
+//Pfad zum Bilderordner
+var images_path="./imgs/";  
+// Wird beim automatischen Drehen verwendet
+var automation_interval=null ;
+//img-Elemente 
+var diskEle=document.getElementById('disk_image'); 
+var birdEle=document.getElementById('bird_image');
+var degreeEle=document.getElementById('rotation_degree');
+
+// Diese Funktion initialisiert die img-Elemente
+function initImages(){
+    var image_name_disk=rotations_array_disk[rotation_position_disk]+'.jpg';
+    var image_name_bird='bird_'+movement_array_bird[movement_position_bird]+'.jpg';
+    diskEle.setAttribute('src',images_path+image_name_disk);
+    birdEle.setAttribute('src',images_path+image_name_bird);
+    degreeEle.innerHTML=rotations_array_disk[rotation_position_disk];
+    
+}
+
+// Auf Tastendruckereignisse warten
+window.onkeydown = function(evt) {
+var key = evt.which ? evt.which : evt.keyCode;
+var c = String.fromCharCode(key);
+switch (c) {
+    case ('R'): // R-Taste wird gedrückt
+        if(automatic_movement){
+            automatic_movement=false;
+            clearInterval(automation_interval);
+        }
+        moveRight();
+        break;
+    case ('L'): // L-Taste wird gedrückt
+        if(automatic_movement){
+            automatic_movement=false;
+            clearInterval(automation_interval);
+        }
+        moveLeft();
+        break;
+    case ('A'): // Eine Taste wird gedrückt
+        moveAuto();
+        break;
+}}
+
+// Scheibe nach rechts drehen und den Vogel vorwärts bewegen
+function moveRight(){
+    if(rotation_position_disk<rotations_array_disk.length-1){
+        rotation_position_disk+=1;
+    }else{
+        rotation_position_disk=0;
+    }
+    var image_name_disk=rotations_array_disk[rotation_position_disk]+'.jpg';
+    diskEle.setAttribute('src',images_path+image_name_disk);
+    degreeEle.innerHTML=rotations_array_disk[rotation_position_disk];
+
+    if(movement_position_bird<movement_array_bird.length-1){
+        movement_position_bird+=1;
+    }else{
+        movement_position_bird=0;  
+    }
+    var image_name_bird='bird_'+movement_array_bird[movement_position_bird]+'.jpg';
+    birdEle.setAttribute('src',images_path+image_name_bird);
+    birdEle.style.transform="scaleX(1)";
+}
+
+// Drehe die Scheibe nach links und bewege den Vogel rückwärts
+function moveLeft(){
+    if(rotation_position_disk!=0){
+        rotation_position_disk-=1;
+    }else{
+        rotation_position_disk=rotations_array_disk.length-1;
+    }
+    var image_name_disk=rotations_array_disk[rotation_position_disk]+'.jpg';
+    diskEle.setAttribute('src',images_path+image_name_disk);
+    degreeEle.innerHTML=rotations_array_disk[rotation_position_disk];
+
+    if(movement_position_bird!=0){
+        movement_position_bird-=1;
+    }else{
+        movement_position_bird=movement_array_bird.length-1;
+    }
+
+    var image_name_bird='bird_'+movement_array_bird[movement_position_bird]+'.jpg';
+    birdEle.setAttribute('src',images_path+image_name_bird);
+    birdEle.style.transform="scaleX(-1)"; // Dies dreht das Bild horizontal
+}
+
+// Drehe die Scheibe um 15 Grad nach rechts und bewege den Vogel alle 50 Millisekunden einen Schritt vorwärts
+function moveAuto(){
+    if(automatic_movement){
+        return;
+    }
+    automatic_movement=true;
+    automation_interval = window.setInterval(function(){
+     moveRight();
+    }, 50);
+}
+
+</script>
+
+</html>
